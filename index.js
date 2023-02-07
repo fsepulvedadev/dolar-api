@@ -9,8 +9,12 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/api", async (req, res) => {
-  let valor = await getDolarOficial();
-  res.send({ dolar: "oficial", valor: valor });
+  try {
+    let valor = await getDolarOficial();
+    res.send({ dolar: "oficial", valor: valor });
+  } catch (e) {
+    res.send({ error: e });
+  }
 });
 
 const api = app.listen(PORT, () => {
