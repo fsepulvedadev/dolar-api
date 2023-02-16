@@ -1,6 +1,6 @@
 import express from "express";
-import getDolarOficial from "../server.js";
 import cors from "cors";
+import { valorDolar, valorSol, valorReal } from "../server.js";
 
 let PORT = 4000 || process.env.PORT;
 var app = express();
@@ -9,12 +9,11 @@ app.use(express.json());
 app.use(cors());
 
 app.get("/api", async (req, res) => {
-  try {
-    let valor = await getDolarOficial();
-    res.send({ dolar: "oficial", valor: valor });
-  } catch (e) {
-    res.send({ error: e });
-  }
+  res.send([
+    { moneda: "dolar oficial", valor: valorDolar },
+    { moneda: "dolar a sol", valor: valorSol },
+    { moneda: "dolar a real", valor: valorReal },
+  ]);
 });
 
 const api = app.listen(PORT, () => {
