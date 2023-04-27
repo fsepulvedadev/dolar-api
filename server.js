@@ -5,28 +5,25 @@ export let valorDolar;
 export let valorSol;
 export let valorReal;
 
-/* var myHeaders = new Headers();
-myHeaders.append("apikey", "5KO67Bz4Fg5s34qWHB5820R46GiuIWby");
-
- */
-
-const getRawData = (URL) => {
-  return fetch(URL)
-    .then((response) => response.text())
-    .then((data) => data);
-};
-
-const URLdolar = "https://www.cronista.com/MercadosOnline/moneda.html?id=ARS";
+const URLdolar = "https://www.infobae.com/economia/divisas/dolar-hoy/";
 
 export const traerDataDolar = async () => {
-  const data = await getRawData(URLdolar);
-  const parsedData = cheerio.load(data);
-  let dolar = parsedData(".value").text();
-  let valores = dolar.split("$");
+  let dolar;
+  const response = await fetch(URLdolar);
+  const body = await response.text();
 
-  valores = valores.filter((valor) => valor !== "");
-  dolar = valores[1].replace(",", ".");
-  return +dolar;
+  const $ = cheerio.load(body);
+
+  $(".d23-excbar-ccy-col").map((i, element) => {
+    const nombre = $(element).find(".d23-excbar-tit").text();
+    const precio = $(element).find(".d23-excbar-val").text();
+
+    if (nombre == "Dólar Banco Nación") {
+      dolar = +precio;
+    }
+
+    valorDolar = dolar;
+  });
 };
 
 export const traerDataSol = async () => {
@@ -61,13 +58,10 @@ export const traerDataReal = async () => {
       traerDataSol();
     });
 };
-await traerDataSol();
-await traerDataReal();
-await traerDataDolar();
+traerDataSol().then(() => console.log("valor sol", valorSol));
 
-console.log("valor dolar", valorDolar);
-console.log("valor real", valorReal);
-console.log("valor SOL", valorSol);
+traerDataReal().then(() => console.log("valor real", valorReal));
+traerDataDolar().then(() => console.log("valor dolar", valorDolar));
 
 setInterval(async () => {
   await traerDataSol();
