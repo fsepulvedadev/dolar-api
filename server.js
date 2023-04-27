@@ -20,7 +20,7 @@ const getRawData = (URL) => {
     .then((data) => data);
 };
 
-const URLdolar = "https://www.cronista.com/MercadosOnline/moneda.html?id=ARSB";
+const URLdolar = "https://www.cronista.com/MercadosOnline/moneda.html?id=ARS";
 
 export const traerDataDolar = async () => {
   const data = await getRawData(URLdolar);
@@ -29,7 +29,7 @@ export const traerDataDolar = async () => {
   let valores = dolar.split("$");
 
   valores = valores.filter((valor) => valor !== "");
-  dolar = valores[0].replace(",", ".");
+  dolar = valores[1].replace(",", ".");
   return +dolar;
 };
 
@@ -40,11 +40,13 @@ export const traerDataSol = async () => {
       requestOptions
     )
       .then((res) => {
-        console.log("tengo el sol");
-
         return res.json();
       })
-      .then((json) => (valorSol = json.result));
+      .then((json) => {
+        console.log("tengo el sol");
+
+        valorSol = json.result;
+      });
   } catch (e) {
     console.log("error", e);
     traerDataSol();
@@ -71,6 +73,11 @@ export const traerDataReal = async () => {
 };
 traerDataReal();
 valorDolar = await traerDataDolar();
+
+traerDataDolar();
+traerDataReal();
+console.log("valor dolar", valorDolar);
+console.log("valor real", valorReal);
 
 setInterval(async () => {
   await traerDataSol();
