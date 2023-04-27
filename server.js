@@ -5,14 +5,10 @@ export let valorDolar;
 export let valorSol;
 export let valorReal;
 
-var myHeaders = new Headers();
+/* var myHeaders = new Headers();
 myHeaders.append("apikey", "5KO67Bz4Fg5s34qWHB5820R46GiuIWby");
 
-var requestOptions = {
-  method: "GET",
-  redirect: "follow",
-  headers: myHeaders,
-};
+ */
 
 const getRawData = (URL) => {
   return fetch(URL)
@@ -36,17 +32,12 @@ export const traerDataDolar = async () => {
 export const traerDataSol = async () => {
   try {
     fetch(
-      "https://api.apilayer.com/exchangerates_data/convert?to=PEN&from=USD&amount=1",
-      requestOptions
+      "https://api.getgeoapi.com/v2/currency/convert?api_key=8621ab8342a7d6c96077e568aac356b84d8b9ace&from=USD&to=PEN&amount=1&format=json"
     )
       .then((res) => {
         return res.json();
       })
-      .then((json) => {
-        console.log("tengo el sol");
-
-        valorSol = json.result;
-      });
+      .then((json) => (valorSol = +json.rates.PEN.rate));
   } catch (e) {
     console.log("error", e);
     traerDataSol();
@@ -55,15 +46,14 @@ export const traerDataSol = async () => {
 
 export const traerDataReal = async () => {
   fetch(
-    "https://api.apilayer.com/exchangerates_data/convert?to=BRL&from=USD&amount=1",
-    requestOptions
+    "https://api.getgeoapi.com/v2/currency/convert?api_key=8621ab8342a7d6c96077e568aac356b84d8b9ace&from=USD&to=BRL&amount=1&format=json"
   )
     .then((res) => {
       console.log("tengo el real");
 
       return res.json();
     })
-    .then((json) => (valorReal = json.result))
+    .then((json) => (valorReal = +json.rates.BRL.rate))
     .catch((e) => {
       console.log(e);
     })
@@ -71,13 +61,13 @@ export const traerDataReal = async () => {
       traerDataSol();
     });
 };
-traerDataReal();
-valorDolar = await traerDataDolar();
+await traerDataSol();
+await traerDataReal();
+await traerDataDolar();
 
-traerDataDolar();
-traerDataReal();
 console.log("valor dolar", valorDolar);
 console.log("valor real", valorReal);
+console.log("valor SOL", valorSol);
 
 setInterval(async () => {
   await traerDataSol();
