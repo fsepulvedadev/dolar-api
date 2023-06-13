@@ -14,12 +14,14 @@ export const traerDataDolar = async () => {
 
   const $ = cheerio.load(body);
 
-  $(".d23-excbar-ccy-col").map((i, element) => {
-    const nombre = $(element).find(".d23-excbar-tit").text();
-    const precio = $(element).find(".d23-excbar-val").text();
+  $(".d23-dolar-item").map((i, element) => {
+    const nombre = $(element).find(".d23-dolar-title").text();
+    const precio = $(element).find(".d23-dolar-amount").text();
 
     if (nombre == "Dólar Banco Nación") {
-      dolar = +precio;
+      let precioLimpio = precio.replace("$", "");
+      console.log(precioLimpio);
+      dolar = +precioLimpio;
     }
 
     valorDolar = dolar;
